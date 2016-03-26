@@ -13,10 +13,13 @@ services:
   
   postgres:
     image: postgres
+    volumes:
+    - ./postgres_data:/data
     environment:  # These variables should reflect whatever is in your applications private/appconfig.ini 
     - POSTGRES_PASSWORD=password
     - POSTGRES_USER=postgres
     - POSTGRES_DB=postgres
+    - PG_DATA=/data
   
   scheduler:
     build: web2py
