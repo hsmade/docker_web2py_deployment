@@ -5,7 +5,7 @@ RUN curl -o /tmp/web2py.zip http://www.web2py.com/examples/static/web2py_src.zip
 RUN pip install redis
 ADD lighttpd-sv.conf fcgihandler.conf /etc/supervisor/conf.d/
 ADD lighttpd.conf /etc/lighttpd/lighttpd.conf
-ADD route.py /opt/web2py/
+ADD routes.py /opt/web2py/
 ADD start.sh /
 EXPOSE 80
 VOLUME /opt/web2py/applications/init
