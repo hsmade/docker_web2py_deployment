@@ -12,15 +12,15 @@ services:
   
   postgres:
     image: postgres
-    environment:
+    environment:  # These variables should reflect whatever is in your applications private/appconfig.ini 
     - POSTGRES_PASSWORD=password
     - POSTGRES_USER=postgres
     - POSTGRES_DB=postgres
   
   scheduler:
     build: web2py
-    entrypoint: python /opt/web2py/web2py.py -K init 
-    command: ""
+    entrypoint: python /opt/web2py/web2py.py -K 
+    command: "init"  # specify multiple times to start more workers, separated by ,
     volumes:
     - ./welcome:/opt/web2py/applications/init
     links:
@@ -31,19 +31,19 @@ services:
     links:
     - web2py
     ports:
-    - '12345:80'
-    - '12346:1936'
+    - '12345:80'  # use this if you want the haproxy to be reachable without using the frontend
+    - '12346:1936'  # use this to export the stats for this haproxy
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
     environment:
     - STATS_PORT=1936
-    - VIRTUAL_HOST=test.fournier.nl
-    - LETSENCRYPT_HOST=test.fournier.nl
-    - LETSENCRYPT_EMAIL=letsencrypt@fournier.nl
-    - DEBUG=True
+    - VIRTUAL_HOST=test.example.com
+    - LETSENCRYPT_HOST=test.example.com
+    - LETSENCRYPT_EMAIL=me@example.com
+    #- DEBUG=True
     networks:
     - DMZ
     - default
 networks:
-  DMZ:
+  DMZ:  # links us to the frontend
     external: true

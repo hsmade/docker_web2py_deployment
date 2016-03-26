@@ -1,7 +1,6 @@
 version: '2'
 services:
   proxy:
-#    image: jwilder/nginx-proxy
     image: rckrdstrgrd/nginx-proxy
     ports:
     - '80:80'
@@ -25,9 +24,9 @@ services:
     volumes:
     - ./certs:/etc/nginx/certs:rw
     - /var/run/docker.sock:/var/run/docker.sock:ro
-    #environment:
+    #environment:  # use this for testing, as there's a rate limit on the default one
     #- ACME_CA_URI=https://acme-staging.api.letsencrypt.org/directory
 
 networks:
-  DMZ:
+  DMZ:  # links us to the web2py pods
     external: true
