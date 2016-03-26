@@ -25,8 +25,8 @@ services:
     build: web2py
     entrypoint: python /opt/web2py/web2py.py -K 
     command: "init"  # specify multiple times to start more workers, separated by ,
-    volumes:
-    - ./app:/opt/web2py/applications/init
+    volumes_from:
+    - web2py
     links:
     - postgres
   
