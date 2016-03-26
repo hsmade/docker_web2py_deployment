@@ -3,6 +3,7 @@ services:
   web2py:
     build: web2py
     volumes:
+    # This is where you mount your project
     - ./welcome:/opt/web2py/applications/init
     links:
     - postgres
