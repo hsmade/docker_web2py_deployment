@@ -19,14 +19,14 @@ services:
     - POSTGRES_PASSWORD=password
     - POSTGRES_USER=postgres
     - POSTGRES_DB=postgres
-    - PG_DATA=/data
+    - PGDATA=/data
   
   scheduler:
     build: web2py
     entrypoint: python /opt/web2py/web2py.py -K 
     command: "init"  # specify multiple times to start more workers, separated by ,
     volumes:
-    - ./welcome:/opt/web2py/applications/init
+    - ./app:/opt/web2py/applications/init
     links:
     - postgres
   
