@@ -1,0 +1,33 @@
+version: '2'
+services:
+  proxy:
+#    image: jwilder/nginx-proxy
+    image: rckrdstrgrd/nginx-proxy
+    ports:
+    - '80:80'
+    - '443:443'
+    volumes:
+    - ./certs:/etc/nginx/certs:ro
+    - /etc/nginx/vhost.d
+    - /etc/nginx/conf.d
+    - /usr/share/nginx/html
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+    - default
+    - DMZ
+    #environment:
+    #- DEBUG:True
+  
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes_from: 
+    - proxy
+    volumes:
+    - ./certs:/etc/nginx/certs:rw
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    #environment:
+    #- ACME_CA_URI=https://acme-staging.api.letsencrypt.org/directory
+
+networks:
+  DMZ:
+    external: true

@@ -1,0 +1,48 @@
+version: '2'
+services:
+  web2py:
+    build: web2py
+    volumes:
+    - ./welcome:/opt/web2py/applications/init
+    links:
+    - postgres
+    environment:
+    - TCP_PORTS=80
+  
+  postgres:
+    image: postgres
+    environment:
+    - POSTGRES_PASSWORD=password
+    - POSTGRES_USER=postgres
+    - POSTGRES_DB=postgres
+  
+  scheduler:
+    build: web2py
+    entrypoint: python /opt/web2py/web2py.py -K init 
+    command: ""
+    volumes:
+    - ./welcome:/opt/web2py/applications/init
+    links:
+    - postgres
+  
+  proxy:
+    image: dockercloud/haproxy
+    links:
+    - web2py
+    ports:
+    - '12345:80'
+    - '12346:1936'
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+    - STATS_PORT=1936
+    - VIRTUAL_HOST=test.fournier.nl
+    - LETSENCRYPT_HOST=test.fournier.nl
+    - LETSENCRYPT_EMAIL=letsencrypt@fournier.nl
+    - DEBUG=True
+    networks:
+    - DMZ
+    - default
+networks:
+  DMZ:
+    external: true
