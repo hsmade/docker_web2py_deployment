@@ -1,0 +1,7 @@
+stages:
+  - build
+
+build:
+  script:
+    - cd web2py/web2py && docker build -t docker.fournier.nl:5000/dkars/web2py . && docker push docker.fournier.nl:5000/dkars/web2py
+
