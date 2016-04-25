@@ -14,7 +14,7 @@ You can specify what web2py app directory to mount in web2py/docker-compose.yml
 # Layout
 This project sets up one web2py pod (from web2py/) that consists of:
 - A postgres database
-- A web2py container which you can scale (by start multiple)
+- A web2py container which you can scale (by starting multiple)
 - A web2py scheduler container which you can scale (by overriding the command)
 - A haproxy that points to the web2py containers and automatically updates on scale changes
 On this pod (in the docker-compose.yml file), you specify the public hostname to use, so the final front end can create virtual hosts and certificates.
