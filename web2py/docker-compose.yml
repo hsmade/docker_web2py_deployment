@@ -1,6 +1,7 @@
 version: '2'
 services:
   web2py:
+    restart: always
     build: web2py
     volumes:
     # This is where you mount your project
@@ -12,6 +13,7 @@ services:
     - TCP_PORTS=80
   
   postgres:
+    restart: always
     image: postgres
     volumes:
     - ./postgres_data:/data
@@ -22,6 +24,7 @@ services:
     - PGDATA=/data
   
   scheduler:
+    restart: always
     build: web2py
     entrypoint: python /opt/web2py/web2py.py -K 
     command: "init"  # specify multiple times to start more workers, separated by ,
@@ -31,9 +34,11 @@ services:
     - postgres
   
   redis:
+    restart: always
     image: redis
     
   proxy:
+    restart: always
     image: dockercloud/haproxy
     links:
     - web2py

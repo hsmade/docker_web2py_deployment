@@ -7,6 +7,8 @@ ADD lighttpd-sv.conf fcgihandler.conf /etc/supervisor/conf.d/
 ADD lighttpd.conf /etc/lighttpd/lighttpd.conf
 ADD routes.py /opt/web2py/
 ADD start.sh /
+RUN cd /opt/web2py/applications/admin/static && ln -s . _2.14.2
+ADD parameters_80.py /opt/web2py/
 EXPOSE 80
 VOLUME /opt/web2py/applications/init
 CMD ["/start.sh"]
