@@ -1,6 +1,7 @@
 version: '2'
 services:
   proxy:
+    restart: always
     image: rckrdstrgrd/nginx-proxy
     ports:
     - '80:80'
@@ -8,24 +9,57 @@ services:
     volumes:
     - ./certs:/etc/nginx/certs:ro
     - /etc/nginx/vhost.d
+    #- ./cms.conf:/etc/nginx/conf.d/_www.example.com.conf # non-docker web hosts
     - /etc/nginx/conf.d
     - /usr/share/nginx/html
     - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
     - default
     - DMZ
-    #environment:
-    #- DEBUG:True
+    environment:
+    - DEBUG:True
+    - DEFAULT_HOST=www.example.com
+    - SERVICE_NAME=frontend
+    - SERVICE_TAGS=frontend,proxy,DMZ
+    - SERVICE_APPLICATION=frontend
+    - SERVICE_80_CHECK_HTTP=/
+    - SERVICE_443_CHECK_HTTP=/
   
   letsencrypt:
+    restart: always
     image: jrcs/letsencrypt-nginx-proxy-companion
     volumes_from: 
     - proxy
     volumes:
     - ./certs:/etc/nginx/certs:rw
     - /var/run/docker.sock:/var/run/docker.sock:ro
-    #environment:  # use this for testing, as there's a rate limit on the default one
-    #- ACME_CA_URI=https://acme-staging.api.letsencrypt.org/directory
+    environment:  # use this for testing, as there's a rate limit on the default one
+#    - ACME_CA_URI=https://acme-staging.api.letsencrypt.org/directory
+#    - DEBUG:True
+
+  consul:
+    image: progrium/consul
+    command: -server -bootstrap -ui-dir /ui -node consul 
+    networks:
+    - DMZ
+
+  registrator:
+    image: gliderlabs/registrator
+    volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+    links:
+    - consul
+    command: -resync=60 -ip 149.210.158.22 consul://consul:8500
+    networks:
+    - DMZ
+
+  alerts:
+    image: acaleph/consul-alerts
+    command: start --consul-addr=consul:8500 --watch-events --watch-checks --log-level=debug
+    links:
+    - consul
+    networks:
+    - DMZ
 
 networks:
   DMZ:  # links us to the web2py pods

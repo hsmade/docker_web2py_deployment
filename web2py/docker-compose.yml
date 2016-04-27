@@ -10,6 +10,9 @@ services:
     - postgres
     - redis
     environment:
+    - SERVICE_NAME=web2py
+    - SERVICE_TAGS=example,web2py,DMZ
+    - SERVICE_APPLICATION=example
     - TCP_PORTS=80
   
   postgres:
@@ -22,6 +25,10 @@ services:
     - POSTGRES_USER=postgres
     - POSTGRES_DB=postgres
     - PGDATA=/data
+    environment:
+    - SERVICE_NAME=postgres
+    - SERVICE_TAGS=example,postgres,DMZ
+    - SERVICE_APPLICATION=example
   
   scheduler:
     restart: always
@@ -32,10 +39,18 @@ services:
     - web2py
     links:
     - postgres
+    environment:
+    - SERVICE_NAME=scheduler
+    - SERVICE_TAGS=example,scheduler,DMZ
+    - SERVICE_APPLICATION=example
   
   redis:
     restart: always
     image: redis
+    environment:
+    - SERVICE_NAME=redis
+    - SERVICE_TAGS=example,redis,DMZ
+    - SERVICE_APPLICATION=example
     
   proxy:
     restart: always
@@ -52,6 +67,10 @@ services:
     - VIRTUAL_HOST=test.example.com
     - LETSENCRYPT_HOST=test.example.com
     - LETSENCRYPT_EMAIL=me@example.com
+    - SERVICE_NAME=proxy
+    - SERVICE_TAGS=example,proxy,DMZ
+    - SERVICE_APPLICATION=example
+    - SERVICE_80_CHECK_HTTP=/static/health.html
     #- DEBUG=True
     networks:
     - DMZ
